@@ -150,9 +150,9 @@ function RasterSeries(filenames::AbstractArray{<:Union{AbstractString,NamedTuple
     else
         # Load everything separately
         if childtype <: AbstractRaster
-            [childtype(fn; lazy, kw...) for fn in filenames]
+            asyncmap(fn -> childtype(fn; lazy, kw...), filenames)
         else
-            [childtype(fn; resize, lazy, kw...) for fn in filenames]
+            asyncmap(fn -> childtype(fn; resize, lazy, kw...), filenames)
         end
     end
     return RasterSeries(data, DD.format(dims, data); refdims)
